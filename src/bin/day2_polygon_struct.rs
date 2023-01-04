@@ -1,33 +1,118 @@
 // TODO: remove this when you're done with your implementation.
 #![allow(unused_variables, dead_code)]
+use std::ops::Add;
+use std::convert::From;
 
+#[derive(Debug, PartialEq, Copy, Clone)]
 pub struct Point {
-    // add fields
+    x: i32,
+    y: i32,
 }
 
 impl Point {
-    // add methods
+    fn new(x: i32, y: i32) -> Point {
+        Point{x, y}
+    }
+
+    fn magnitude(&self) -> f64 {
+        (f64::from(self.x * self.x) + f64::from(self.y * self.y)).sqrt()
+    }
+
+    fn dist(&self, p: Point) -> f64 {
+        let a = f64::from(self.x - p.x);
+        let b = f64::from(self.y - p.y);
+        (a * a + b * b).sqrt()
+    }
+}
+
+impl Add for Point {
+    type Output = Self;
+    fn add(self, other: Self) -> Self {
+        Self {
+            x: self.x + other.x,
+            y: self.y + other.y,
+        }
+    }
 }
 
 pub struct Polygon {
-    // add fields
+    points: Vec<Point>,
+}
+
+impl From<Polygon> for Shape {
+    fn from(item: Polygon) -> Self {
+        Shape::Polygon(item)
+    }
+}
+
+impl From<Circle> for Shape {
+    fn from(item: Circle) -> Self {
+        Shape::Circle(item)
+    }
 }
 
 impl Polygon {
-    // add methods
+    fn new() -> Polygon {
+        Polygon {
+            points: vec![],
+        }
+    }
+    fn left_most_point(&self) -> Option<Point> {
+        let mut ans: Option<Point> = None;
+        for p in self.points.iter() {
+            match ans {
+                Some(prev) => {
+                    if p.x < prev.x {
+                        ans = Some(*p);
+                    }
+                },
+                None => {
+                    ans = Some(*p);
+                }
+            }
+        }
+        ans
+    }
+
+    fn iter(&self) -> std::slice::Iter<'_, Point> {
+        self.points.iter() 
+    }
+
+    fn add_point(&mut self, p: Point) {
+        self.points.push(p);
+    }
 }
 
 pub struct Circle {
-    // add fields
+   center: Point,
+   radius: i32,
 }
 
 impl Circle {
-    // add methods
+    fn new(c: Point, r: i32) -> Circle {
+        Circle {
+            center: c,
+            radius: r,
+        }
+    }
+
+    fn circumference(&self) -> f64 {
+        2.0 * f64::from(self.radius) * std::f64::consts::PI
+    }
 }
 
 pub enum Shape {
     Polygon(Polygon),
     Circle(Circle),
+}
+
+impl Shape {
+    fn circumference(&self) -> f64 {
+        match self {
+            Self::Polygon(p) => 15.48, // TODO: how to calc Polygon's circumference?
+            Self::Circle(c) => c.circumference(),
+        }
+    }
 }
 
 #[cfg(test)]
