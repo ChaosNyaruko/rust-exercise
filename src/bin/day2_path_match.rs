@@ -53,3 +53,24 @@ fn test_matches_with_wildcard() {
 fn main() {
     prefix_matches("/test/*/war/", "");
 }
+
+pub fn solution_prefix_matches(prefix: &str, request_path: &str) -> bool {
+    // ANCHOR_END: prefix_matches
+    let prefixes = prefix.split('/');
+    let request_paths = request_path
+        .split('/')
+        .map(|p| Some(p))
+        .chain(std::iter::once(None));
+
+    for (prefix, request_path) in prefixes.zip(request_paths) {
+        match request_path {
+            Some(request_path) => {
+                if (prefix != "*") && (prefix != request_path) {
+                    return false;
+                }
+            }
+            None => return false,
+        }
+    }
+    true
+}
