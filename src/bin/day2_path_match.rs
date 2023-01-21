@@ -2,7 +2,19 @@
 #![allow(unused_variables, dead_code)]
 
 pub fn prefix_matches(prefix: &str, request_path: &str) -> bool {
-    unimplemented!()
+    let prefix_parts: Vec<&str> = prefix.split('/').filter(|&x| x != "").collect();
+    println!("prefix parts: {:?}", prefix_parts);
+    let request_parts: Vec<&str> = request_path.split('/').filter(|&x| x != "").collect();
+    println!("request parts: {:?}", request_parts);
+    for p in prefix_parts.into_iter().enumerate() {
+        if p.0 >= request_parts.len() {
+            return false;
+        }
+        if p.1 != "*" && request_parts[p.0] != p.1 {
+            return false;
+        }
+    }
+    true
 }
 
 #[test]
@@ -36,4 +48,8 @@ fn test_matches_with_wildcard() {
         "/v1/publishers/*/books",
         "/v1/publishers/foo/booksByAuthor"
     ));
+}
+
+fn main() {
+    prefix_matches("/test/*/war/", "");
 }
