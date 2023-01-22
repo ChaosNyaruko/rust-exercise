@@ -1,4 +1,3 @@
-// TODO: remove this when you're done with your implementation.
 #![allow(unused_variables, dead_code)]
 
 /// The Luhn algorithm is used to validate credit card numbers.
